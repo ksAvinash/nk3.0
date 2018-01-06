@@ -1,7 +1,14 @@
 <resources>
-    <string name="app_name">Namma Karnataka</string>
+    <string name="app_name">NK</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_activity_splasher">SplasherActivity</string>
+    <string name="title_activity_signup">SignupActivity</string>
+    <string name="title_activity_google_signin">GoogleSigninActivity</string>
+
+    <string name="validate_username">https://n1fndrehg4.execute-api.ap-south-1.amazonaws.com/nammakarnataka/username-validate</string>
+    <string name="app_signup_url">https://n1fndrehg4.execute-api.ap-south-1.amazonaws.com/nammakarnataka/user-signup</string>
+    <string name="firebase_id_update">https://n1fndrehg4.execute-api.ap-south-1.amazonaws.com/nammakarnataka/firebase-id-update</string>
+    <string name="validate_existing_user">https://n1fndrehg4.execute-api.ap-south-1.amazonaws.com/nammakarnataka/validate-existing-user</string>
 </resources>
