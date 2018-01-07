@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;
@@ -257,9 +258,12 @@ public class BackendHelper {
     }
 
 
-
-
-
+    /*
+    FIREBASE ID UPDATE CLASS
+    1) Get the device firebase ID token
+    2) Get user's email id
+    3) Push to backend
+    */
     public static class firebase_id_update extends AsyncTask <Context, String, String> {
 
         @Override
@@ -303,6 +307,82 @@ public class BackendHelper {
         }
     }
 
+
+    public static class fetch_category_places extends AsyncTask<Object, String, String> {
+        Context context;
+        @Override
+        protected void onPostExecute(String str) {
+            super.onPostExecute(str);
+
+            if(str != null){
+                try {
+                    JSONObject object = new JSONObject(str);
+                    boolean response = object.getBoolean("fetch_category_places");
+                    if(response){
+                        JSONObject data = object.getJSONObject("data");
+                        JSONArray places = data.getJSONArray("Items");
+
+                        for(int i=0; i< data.getInt("Count"); i++){
+                            JSONObject current_place = places.getJSONObject(i);
+                            Log.d("NK_BACKEND", current_place.getString("place_name"));
+
+                            SQLiteDatabaseHelper helper = new SQLiteDatabaseHelper(context);
+                            helper.insertIntoPlace(current_place.getInt("place_id"), current_place.getString("place_name"),
+                                    current_place.getString("description"), current_place.getString("district"),
+                                    current_place.getString("bestSeason"), current_place.getString("additionalInformation"),
+                                    current_place.getDouble("latitude"), current_place.getDouble("longitude"), current_place.getString("category")
+                            );
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
+        @Override
+        protected String doInBackground(Object... objects) {
+            context = (Context) objects[0];
+            String category = (String) objects[1];
+
+            try {
+                URL url = new URL(context.getResources().getString(R.string.fetch_category_places));
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+
+                JSONObject jsonParam = new JSONObject();
+                jsonParam.put("category", category);
+
+
+                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+                os.writeBytes(jsonParam.toString());
+                os.flush();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder serverBuffer = new StringBuilder();
+                String server_response = "";
+                while ((server_response = bufferedReader.readLine()) != null) {
+                    serverBuffer.append(server_response);
+                }
+
+                //Log.d("NK_BACKEND", "RESPONSE : " + serverBuffer.toString());
+
+                os.close();
+                conn.disconnect();
+
+                return serverBuffer.toString();
+            } catch (Exception e) {
+                Log.d("NK_BACKEND", "Error updating firebase-id");
+                Log.d("NK_BACKEND", e.toString());
+            }
+            return null;
+        }
+
+    }
 
 
 }

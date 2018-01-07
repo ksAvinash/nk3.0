@@ -41,6 +41,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         //Send firebase_instance_id to BackendHelper systems
         BackendHelper.firebase_id_update firebaseIdUpdate = new BackendHelper.firebase_id_update();
         firebaseIdUpdate.execute(context);
+
     }
 
 
