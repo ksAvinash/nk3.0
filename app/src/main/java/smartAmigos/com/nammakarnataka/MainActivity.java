@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -22,18 +24,34 @@ public class MainActivity extends AppCompatActivity {
     Context context;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        FragmentManager fragmentManager;
+        FragmentTransaction fragmentTransaction;
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
+
                 case R.id.navigation_home:
+                    fragmentManager = getSupportFragmentManager();
+                    fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_content, new HomeFragment()).commit();
                     return true;
+
                 case R.id.navigation_profile:
                     return true;
+
                 case R.id.navigation_category:
+                    fragmentManager = getSupportFragmentManager();
+                    fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_content, new CategoriesFragment()).commit();
                     return true;
+
                 case R.id.navigation_trending:
+                    fragmentManager = getSupportFragmentManager();
+                    fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_content, new TrendingFragment()).commit();
                     return true;
+
             }
             return false;
         }
@@ -45,15 +63,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
 
-
+        //Initialize the bottom navigation view and it's listener
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        //Jump to HomeFragment on MainActivity invocation
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame_content, new HomeFragment()).commit();
+
         fetch_places();
-
-
     }
-
 
 
     public void fetch_places(){
@@ -72,15 +92,61 @@ public class MainActivity extends AppCompatActivity {
                 //Start getting the places by category
                 BackendHelper.fetch_category_places fetchCategoryPlaces = new BackendHelper.fetch_category_places();
                 fetchCategoryPlaces.execute(context, "temple");
-//                fetchCategoryPlaces.execute(context, "hillstation");
-//                fetchCategoryPlaces.execute(context, "dam");
-//                fetchCategoryPlaces.execute(context, "waterfall");
-//                fetchCategoryPlaces.execute(context, "other");
-//                fetchCategoryPlaces.execute(context, "trekking");
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        BackendHelper.fetch_category_places fetchCategoryPlaces = new BackendHelper.fetch_category_places();
+                        fetchCategoryPlaces.execute(context, "hillstation");
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                BackendHelper.fetch_category_places fetchCategoryPlaces = new BackendHelper.fetch_category_places();
+                                fetchCategoryPlaces.execute(context, "dam");
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        BackendHelper.fetch_category_places fetchCategoryPlaces = new BackendHelper.fetch_category_places();
+                                        fetchCategoryPlaces.execute(context, "waterfall");
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                BackendHelper.fetch_category_places fetchCategoryPlaces = new BackendHelper.fetch_category_places();
+                                                fetchCategoryPlaces.execute(context, "trekking");
+                                                new Handler().postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        BackendHelper.fetch_category_places fetchCategoryPlaces = new BackendHelper.fetch_category_places();
+                                                        fetchCategoryPlaces.execute(context, "heritage");
+                                                        new Handler().postDelayed(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                BackendHelper.fetch_category_places fetchCategoryPlaces = new BackendHelper.fetch_category_places();
+                                                                fetchCategoryPlaces.execute(context, "beach");
+                                                                new Handler().postDelayed(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        BackendHelper.fetch_category_places fetchCategoryPlaces = new BackendHelper.fetch_category_places();
+                                                                        fetchCategoryPlaces.execute(context, "other");
+                                                                    }
+                                                                }, 10000);
+                                                            }
+                                                        }, 10000);
+                                                    }
+                                                }, 10000);
+                                            }
+                                        }, 10000);
+                                    }
+                                }, 10000);
+                            }
+                        }, 10000);
+                    }
+                }, 10000);
 
             }
         }
     }
+
 
     private boolean get_previous_fetch_history() {
         Date current_date = new Date();

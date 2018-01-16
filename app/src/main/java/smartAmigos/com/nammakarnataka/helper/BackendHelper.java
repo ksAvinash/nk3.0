@@ -324,7 +324,7 @@ public class BackendHelper {
 
                         for(int i=0; i< data.getInt("Count"); i++){
                             JSONObject current_place = places.getJSONObject(i);
-                            Log.d("NK_BACKEND", current_place.getString("place_name"));
+                            Log.d("NK_BACKEND SQLiteDB ", current_place.getString("category")+" : "+current_place.getString("place_name"));
 
                             SQLiteDatabaseHelper helper = new SQLiteDatabaseHelper(context);
                             helper.insertIntoPlace(current_place.getInt("place_id"), current_place.getString("place_name"),

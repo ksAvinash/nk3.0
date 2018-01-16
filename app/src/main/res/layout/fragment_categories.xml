@@ -1,0 +1,82 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="smartAmigos.com.nammakarnataka.CategoriesFragment">
+
+
+    <Button
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/category_temples"
+        android:text="TEMPLES"
+        />
+
+    <Button
+        android:layout_below="@+id/category_temples"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/category_beaches"
+        android:text="BEACHES"
+        />
+
+    <Button
+        android:layout_below="@+id/category_beaches"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/category_hillstations"
+        android:text="HILLSTATIONS"
+        />
+
+    <Button
+        android:layout_below="@+id/category_hillstations"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/category_waterfalls"
+        android:text="WATERFALLS"
+        />
+
+    <Button
+        android:layout_below="@+id/category_waterfalls"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/category_dams"
+        android:text="DAMS"
+        />
+
+    <Button
+        android:layout_below="@+id/category_dams"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/category_heritage"
+        android:text="HERITAGE"
+        />
+
+    <Button
+        android:layout_below="@+id/category_heritage"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/category_trekking"
+        android:text="TREKKING"
+        />
+
+    <Button
+        android:layout_below="@+id/category_trekking"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/category_others"
+        android:text="OTHER PLACES"
+        />
+
+
+
+</RelativeLayout>

@@ -3,6 +3,7 @@ package smartAmigos.com.nammakarnataka.helper;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -116,4 +117,11 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
 
         return true;
     }
+
+
+    public Cursor getAllPlacesByCategory(String category){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("select * from "+TABLE_PLACES+" where "+PLACE_CATEGORY+" = '"+category +"';",null);
+    }
+
 }
