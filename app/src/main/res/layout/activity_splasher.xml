@@ -1,20 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/app_background"
     tools:context="smartAmigos.com.nammakarnataka.SplasherActivity">
 
 
-    <ImageView
-        android:layout_marginTop="30dp"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+    <smartAmigos.com.nammakarnataka.fonts.kaushan_font
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:src="@drawable/karnataka_map"
+        android:id="@+id/splasher_nk"
+        android:text="Namma Karnataka"
+        android:textColor="#ffffff"
+        android:textSize="40sp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        />
+
+    <smartAmigos.com.nammakarnataka.fonts.kaushan_font
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:id="@+id/splasher_slogan"
+        android:text="ನಮ್ಮ ನಾಡು ಕರುನಾಡು"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:layout_below="@+id/splasher_nk"
         />
 
 
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/avi"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        style="@style/AVLoadingIndicatorView"
+        android:visibility="visible"
+        app:indicatorName="SemiCircleSpinIndicator"
+        app:indicatorColor="#ffffff"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/splasher_slogan"
+        />
+
 </RelativeLayout>
+
+

@@ -5,12 +5,13 @@ package smartAmigos.com.nammakarnataka.helper;
  */
 
 public class place_general_adapter {
-
+    int id;
     String title, description, district;
     String bestSeason,additionalInformation;
     Double latitude, longitude;
 
-    public place_general_adapter(String title, String description, String district, String bestSeason, String additionalInformation, Double latitude, Double longitude) {
+    public place_general_adapter(int id, String title, String description, String district, String bestSeason, String additionalInformation, Double latitude, Double longitude) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.district = district;
@@ -18,6 +19,15 @@ public class place_general_adapter {
         this.additionalInformation = additionalInformation;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+
+        return id;
     }
 
     public void setTitle(String title) {

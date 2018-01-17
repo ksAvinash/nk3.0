@@ -124,4 +124,58 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery("select * from "+TABLE_PLACES+" where "+PLACE_CATEGORY+" = '"+category +"';",null);
     }
 
+
+
+
+    public Cursor getPlaceById(int id)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("select * from "+TABLE_PLACES+" where "+PLACE_ID+" = "+id+";",null);
+    }
+    public Cursor getAllTemples(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("select * from "+TABLE_PLACES+" where "+PLACE_CATEGORY+" = 'temple' ;",null);
+    }
+    public Cursor getAllBeaches(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("select * from "+TABLE_PLACES+" where "+PLACE_CATEGORY+" = 'beach' ;",null);
+    }
+    public Cursor getAllHeritages(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("select * from "+TABLE_PLACES+" where "+PLACE_CATEGORY+" = 'heritage' ;",null);
+    }
+    public Cursor getAllDams(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("select * from "+TABLE_PLACES+" where "+PLACE_CATEGORY+" = 'dam' ;",null);
+    }
+    public Cursor getAllHillstations(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("select * from "+TABLE_PLACES+" where "+PLACE_CATEGORY+" = 'hillstation' ;",null);
+    }
+    public Cursor getAllTrekkings(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("select * from "+TABLE_PLACES+" where "+PLACE_CATEGORY+" = 'trekking' ;",null);
+    }
+    public Cursor getAllWaterfalls(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("select * from "+TABLE_PLACES+" where "+PLACE_CATEGORY+" = 'waterfall' ;",null);
+    }
+    public Cursor getAllOtherPlaces(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("select * from "+TABLE_PLACES+" where "+PLACE_CATEGORY+" = 'other' ;",null);
+    }
+    public Cursor getPlaceByDistrict(String dist){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("select * from "+TABLE_PLACES+" where "+PLACE_DISTRICT+" = '"+dist+"' ;",null);
+    }
+    public Cursor getPlaceByString(String str){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("select * from "+TABLE_PLACES+" where "+PLACE_NAME+" like '%"+str+"%' ;",null);
+    }
+    public Cursor getAllDistricts(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("select distinct "+PLACE_DISTRICT+" from "+TABLE_PLACES+" order by "+PLACE_DISTRICT+" ;",null);
+    }
+
+
 }

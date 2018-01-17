@@ -17,6 +17,11 @@
         android:title="Category" />
 
     <item
+        android:id="@+id/navigation_maps"
+        android:icon="@drawable/navigation_maps"
+        android:title="Maps" />
+
+    <item
         android:id="@+id/navigation_profile"
         android:icon="@drawable/navigation_profile"
         android:title="Profile" />

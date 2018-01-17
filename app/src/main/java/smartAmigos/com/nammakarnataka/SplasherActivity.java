@@ -32,7 +32,7 @@ public class SplasherActivity extends AppCompatActivity {
                     startActivity(intent);
                     SplasherActivity.this.finish();
                 }
-            }, 2500);
+            }, 3000);
         }else{
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -41,7 +41,7 @@ public class SplasherActivity extends AppCompatActivity {
                     startActivity(intent);
                     SplasherActivity.this.finish();
                 }
-            }, 2500);
+            }, 3000);
         }
 
 

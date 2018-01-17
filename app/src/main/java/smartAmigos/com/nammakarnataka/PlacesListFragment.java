@@ -22,13 +22,13 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import java.util.ArrayList;
 import java.util.List;
 
+import smartAmigos.com.nammakarnataka.helper.CircleProgressBarDrawable;
 import smartAmigos.com.nammakarnataka.helper.SQLiteDatabaseHelper;
 import smartAmigos.com.nammakarnataka.helper.place_general_adapter;
-
-
 /**
  * A simple {@link Fragment} subclass.
  */
+
 public class PlacesListFragment extends Fragment {
     String category;
 
@@ -71,6 +71,7 @@ public class PlacesListFragment extends Fragment {
         while (placesListCursor.moveToNext()){
 
             placeAdapterList.add( new place_general_adapter(
+                        placesListCursor.getInt(0),
                         placesListCursor.getString(1),
                         placesListCursor.getString(2),
                         placesListCursor.getString(3),
@@ -89,6 +90,29 @@ public class PlacesListFragment extends Fragment {
     private void displayList() {
         ArrayAdapter<place_general_adapter> adapter = new myPlaceAdapterClass();
         places_list.setAdapter(adapter);
+
+        places_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                try{
+                    helper = new SQLiteDatabaseHelper(context);
+                    place_general_adapter current = placeAdapterList.get(position);
+
+                    //Handle clicks to navigate to place_fragment along with the ID value
+                    PlaceFragment place_fragment = new PlaceFragment();
+                    Bundle fragment_agruments = new Bundle();
+                    fragment_agruments.putInt("id", current.getId());
+                    place_fragment.setArguments(fragment_agruments);
+                    getFragmentManager().beginTransaction().replace(R.id.frame_content, place_fragment).commit();
+
+                }catch (Exception e){
+
+                }
+
+
+            }
+        });
     }
 
 
@@ -118,18 +142,14 @@ public class PlacesListFragment extends Fragment {
             TextView t_district = itemView.findViewById(R.id.placeList_district);
             t_district.setText(current.getDistrict());
 
-            String head_image = getResources().getString(R.string.s3_base_url)+"/"+category+"/"+position+"/head.jpg";
-            Log.d("S3 URL : ", head_image);
+            String head_image = getResources().getString(R.string.s3_base_url)+"/"+category+"/"+current.getId()+"/head.jpg";
             Uri uri = Uri.parse(head_image);
             SimpleDraweeView draweeView = itemView.findViewById(R.id.placeList_image);
+            draweeView.getHierarchy().setProgressBarImage(new CircleProgressBarDrawable(1));
             draweeView.setImageURI(uri);
 
             return itemView;
         }
 
     }
-
-
-
-
 }

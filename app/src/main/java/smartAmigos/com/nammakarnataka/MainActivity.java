@@ -1,6 +1,7 @@
 package smartAmigos.com.nammakarnataka;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -52,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
                     fragmentTransaction.replace(R.id.frame_content, new TrendingFragment()).commit();
                     return true;
 
+                case R.id.navigation_maps:
+                    Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                    startActivity(intent);
+                    return true;
             }
             return false;
         }
