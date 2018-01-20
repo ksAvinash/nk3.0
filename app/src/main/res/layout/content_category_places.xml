@@ -1,13 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="smartAmigos.com.nammakarnataka.PlacesListFragment"
+    tools:context="smartAmigos.com.nammakarnataka.CategoryPlacesActivity"
+    tools:showIn="@layout/activity_category_places"
     android:background="@drawable/wallpaper1"
     >
 
-    <smartAmigos.com.nammakarnataka.fonts.kaushan_font
+
+    <smartAmigos.com.nammakarnataka.fonts.titles_font
         android:id="@+id/category_name"
         android:layout_width="wrap_content"
         android:textAllCaps="true"
@@ -15,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:padding="8dp"
-        android:textSize="22sp" />
+        android:textSize="30sp" />
 
 
     <ListView
@@ -25,4 +28,5 @@
         android:layout_height="match_parent"
         android:divider="@null"
         />
+
 </RelativeLayout>

@@ -1,8 +1,28 @@
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="smartAmigos.com.nammakarnataka.HomeFragment">
 
-</FrameLayout>
+    <smartAmigos.com.nammakarnataka.fonts.titles_font
+        android:layout_marginTop="12dp"
+        android:layout_width="wrap_content"
+        android:id="@+id/features_places_textview"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="FEATURED PLACES"
+        android:textSize="28sp" />
+
+    <com.daimajia.slider.library.SliderLayout
+        android:layout_below="@+id/features_places_textview"
+        android:id="@+id/homeFragmentSlider"
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
+        android:background="@color/colorPrimary"
+        android:layout_marginTop="12dp"
+        />
+
+
+
+</RelativeLayout>

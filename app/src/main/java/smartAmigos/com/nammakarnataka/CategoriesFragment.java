@@ -1,6 +1,7 @@
 package smartAmigos.com.nammakarnataka;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,6 +25,7 @@ public class CategoriesFragment extends Fragment implements View.OnClickListener
 
     View view;
     Button category_temples, category_beaches, category_hillstations, category_waterfalls, category_trekking, category_dams, category_heritage, category_others;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -64,59 +66,53 @@ public class CategoriesFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
 
-        PlacesListFragment placesListFragment = new PlacesListFragment();
-        Bundle fragment_agruments = new Bundle();
+        Intent intent = new Intent(getActivity(), CategoryPlacesActivity.class);
+
 
         switch (view.getId()){
             case R.id.category_temples:
-                fragment_agruments.putString("category", "temple");
-                placesListFragment.setArguments(fragment_agruments);
-                getFragmentManager().beginTransaction().replace(R.id.frame_content, placesListFragment).commit();
+                intent.putExtra("category", "temple");
+                startActivity(intent);
                 break;
 
             case R.id.category_beaches:
-                fragment_agruments.putString("category", "beach");
-                placesListFragment.setArguments(fragment_agruments);
-                getFragmentManager().beginTransaction().replace(R.id.frame_content, placesListFragment).commit();
-                break;
+                intent.putExtra("category", "beach");
+                startActivity(intent);
+               break;
 
             case R.id.category_hillstations:
-                fragment_agruments.putString("category", "hillstation");
-                placesListFragment.setArguments(fragment_agruments);
-                getFragmentManager().beginTransaction().replace(R.id.frame_content, placesListFragment).commit();
+                intent.putExtra("category", "hillstation");
+                startActivity(intent);
                 break;
 
             case R.id.category_waterfalls:
-                fragment_agruments.putString("category", "waterfall");
-                placesListFragment.setArguments(fragment_agruments);
-                getFragmentManager().beginTransaction().replace(R.id.frame_content, placesListFragment).commit();
+                intent.putExtra("category", "waterfall");
+                startActivity(intent);
                 break;
 
             case R.id.category_dams:
-                fragment_agruments.putString("category", "dam");
-                placesListFragment.setArguments(fragment_agruments);
-                getFragmentManager().beginTransaction().replace(R.id.frame_content, placesListFragment).commit();
+                intent.putExtra("category", "dam");
+                startActivity(intent);
                 break;
 
             case R.id.category_heritage:
-                fragment_agruments.putString("category", "heritage");
-                placesListFragment.setArguments(fragment_agruments);
-                getFragmentManager().beginTransaction().replace(R.id.frame_content, placesListFragment).commit();
+                intent.putExtra("category", "heritage");
+                startActivity(intent);
                 break;
 
             case R.id.category_trekking:
-                fragment_agruments.putString("category", "trekking");
-                placesListFragment.setArguments(fragment_agruments);
-                getFragmentManager().beginTransaction().replace(R.id.frame_content, placesListFragment).commit();
+                intent.putExtra("category", "trekking");
+                startActivity(intent);
                 break;
 
             case R.id.category_others:
-                fragment_agruments.putString("category", "other");
-                placesListFragment.setArguments(fragment_agruments);
-                getFragmentManager().beginTransaction().replace(R.id.frame_content, placesListFragment).commit();
+                intent.putExtra("category", "other");
+                startActivity(intent);
                 break;
 
 
         }
     }
+
+
 }

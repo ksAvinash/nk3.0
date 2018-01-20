@@ -1,14 +1,13 @@
 package smartAmigos.com.nammakarnataka;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,30 +24,35 @@ import java.util.List;
 import smartAmigos.com.nammakarnataka.helper.CircleProgressBarDrawable;
 import smartAmigos.com.nammakarnataka.helper.SQLiteDatabaseHelper;
 import smartAmigos.com.nammakarnataka.helper.place_general_adapter;
+
+
 /**
  * A simple {@link Fragment} subclass.
  */
+public class SearchResults extends Fragment {
 
-public class PlacesListFragment extends Fragment {
-    String category;
+    Cursor PlaceCursor;
+    View view;
+    Context context;
+    ListView list;
+    SQLiteDatabaseHelper helper;
+    private List<place_general_adapter> placeAdapterList = new ArrayList<>();
 
-    public PlacesListFragment() {
+    public SearchResults() {
         // Required empty public constructor
     }
 
-    View view;
-    Context context;
-    SQLiteDatabaseHelper helper;
-    Cursor placesListCursor;
-    TextView category_name;
-    ListView places_list;
+    @SuppressLint("ValidFragment")
+    public SearchResults(Cursor PlaceCursor) {
+        this.PlaceCursor = PlaceCursor;
+    }
 
-    private List<place_general_adapter> placeAdapterList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view =  inflater.inflate(R.layout.fragment_places_list, container, false);
+        // Inflate the layout for this fragment
+        view =  inflater.inflate(R.layout.fragment_search_results, container, false);
 
         initializeViews(view);
 
@@ -56,42 +60,32 @@ public class PlacesListFragment extends Fragment {
     }
 
 
-    public void initializeViews(View view){
+    private void initializeViews(View view){
         context = getActivity().getApplicationContext();
-        category = getArguments().getString("category");
+        list = view.findViewById(R.id.searchList);
 
-        category_name = view.findViewById(R.id.category_name);
-        category_name.setText(category);
-
-        places_list = view.findViewById(R.id.places_list);
-
-        helper = new SQLiteDatabaseHelper(context);
-        placesListCursor = helper.getAllPlacesByCategory(category);
-
-        while (placesListCursor.moveToNext()){
+        while (PlaceCursor.moveToNext()){
 
             placeAdapterList.add( new place_general_adapter(
-                        placesListCursor.getInt(0),
-                        placesListCursor.getString(1),
-                        placesListCursor.getString(2),
-                        placesListCursor.getString(3),
-                        placesListCursor.getString(4),
-                        placesListCursor.getString(5),
-                        placesListCursor.getDouble(6),
-                        placesListCursor.getDouble(7)
-                    ));
+                    PlaceCursor.getInt(0),
+                    PlaceCursor.getString(1),
+                    PlaceCursor.getString(2),
+                    PlaceCursor.getString(3),
+                    PlaceCursor.getString(4),
+                    PlaceCursor.getString(5),
+                    PlaceCursor.getDouble(6),
+                    PlaceCursor.getDouble(7),
+                    PlaceCursor.getString(8)
+            ));
         }
         displayList();
-
     }
 
 
-
     private void displayList() {
-        ArrayAdapter<place_general_adapter> adapter = new myPlaceAdapterClass();
-        places_list.setAdapter(adapter);
-
-        places_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ArrayAdapter<place_general_adapter> adapter = new mySearchPlaceAdapterClass();
+        list.setAdapter(adapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -110,15 +104,14 @@ public class PlacesListFragment extends Fragment {
 
                 }
 
-
             }
         });
     }
 
 
-    public class myPlaceAdapterClass extends ArrayAdapter<place_general_adapter> {
+    public class mySearchPlaceAdapterClass extends ArrayAdapter<place_general_adapter> {
 
-        myPlaceAdapterClass() {
+        mySearchPlaceAdapterClass() {
             super(context, R.layout.place_list_item, placeAdapterList);
         }
 
@@ -142,6 +135,7 @@ public class PlacesListFragment extends Fragment {
             TextView t_district = itemView.findViewById(R.id.placeList_district);
             t_district.setText(current.getDistrict());
 
+            String category = current.getCategory();
             String head_image = getResources().getString(R.string.s3_base_url)+"/"+category+"/"+current.getId()+"/head.jpg";
             Uri uri = Uri.parse(head_image);
             SimpleDraweeView draweeView = itemView.findViewById(R.id.placeList_image);
@@ -152,4 +146,5 @@ public class PlacesListFragment extends Fragment {
         }
 
     }
+
 }

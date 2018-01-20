@@ -3,26 +3,37 @@ package smartAmigos.com.nammakarnataka;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+
+
+import android.app.SearchManager;
+import android.support.v7.widget.SearchView;
 
 import java.util.Calendar;
 import java.util.Date;
-
 import smartAmigos.com.nammakarnataka.helper.BackendHelper;
+import smartAmigos.com.nammakarnataka.helper.SQLiteDatabaseHelper;
+
 
 public class MainActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences;
     Context context;
+    SQLiteDatabaseHelper myDBHelper;
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         FragmentManager fragmentManager;
@@ -71,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
         //Initialize the bottom navigation view and it's listener
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+
 
         //Jump to HomeFragment on MainActivity invocation
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -182,4 +195,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+
+        final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        final SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnQueryTextListener(
+                new SearchView.OnQueryTextListener(){
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        myDBHelper = new SQLiteDatabaseHelper(getApplicationContext());
+                        Cursor cursor = myDBHelper.getPlaceByString(query);
+
+                        Fragment fragment = new SearchResults(cursor);
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.frame_content, fragment);
+                        ft.commit();
+                       return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        myDBHelper = new SQLiteDatabaseHelper(getApplicationContext());
+                        Cursor cursor = myDBHelper.getPlaceByString(newText);
+
+                        Fragment fragment = new SearchResults(cursor);
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.frame_content, fragment);
+                        ft.commit();
+                        return false;
+                    }
+                }
+        );
+
+        return true;
+    }
 }
