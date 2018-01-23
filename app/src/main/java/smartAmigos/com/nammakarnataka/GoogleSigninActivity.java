@@ -1,11 +1,13 @@
 package smartAmigos.com.nammakarnataka;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.auth.api.Auth;
@@ -22,10 +24,8 @@ import smartAmigos.com.nammakarnataka.helper.BackendHelper;
 public class GoogleSigninActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
 
-    private SignInButton googleSignInButton;
     private GoogleApiClient googleApiClient;
     private static final int REQ_CODE = 9001;
-
     static Context context;
 
 
@@ -38,7 +38,7 @@ public class GoogleSigninActivity extends AppCompatActivity implements GoogleApi
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions).build();
 
-        googleSignInButton = findViewById(R.id.googleSignInButton);
+        SignInButton googleSignInButton = findViewById(R.id.googleSignInButton);
         googleSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -49,9 +49,10 @@ public class GoogleSigninActivity extends AppCompatActivity implements GoogleApi
 
     }
 
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Log.d("GOOGLE - SIGNIN", connectionResult.getErrorMessage());
     }
 
     @Override
@@ -63,28 +64,30 @@ public class GoogleSigninActivity extends AppCompatActivity implements GoogleApi
         }
     }
 
-
     private void handleResult(GoogleSignInResult signInResult) {
-        if (signInResult.isSuccess()) {
-            GoogleSignInAccount googleSignInAccount = signInResult.getSignInAccount();
 
-            String name = googleSignInAccount.getDisplayName();
+        if (signInResult.isSuccess()) {
+
+            Log.d("GOOGLE - SIGNIN", "PASS");
+            GoogleSignInAccount googleSignInAccount = signInResult.getSignInAccount();
             String email = googleSignInAccount.getEmail();
 
             //save data to sharedpreferences
             SharedPreferences sharedPreferences = getSharedPreferences("nk", MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("name", name);
             editor.putString("email", email);
             editor.commit();
 
             BackendHelper.validate_existing_user validate_existing_user = new BackendHelper.validate_existing_user();
             validate_existing_user.execute(email, context);
+        }else{
+            Log.d("GOOGLE - SIGNIN", "FAIL");
         }
     }
 
 
     public static void callSignupActivity(boolean value){
+
         if(value){
             Intent intent = new Intent(context, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

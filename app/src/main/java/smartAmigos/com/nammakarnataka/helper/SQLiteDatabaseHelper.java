@@ -17,7 +17,6 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_PLACES = "nk_places";
     private static final String TABLE_FAVOURITE = "nk_fav";
     private static final String TABLE_VISITED = "nk_visited";
-    private static final String TABLE_CONFIGURATION = "nk_configuration";
 
     private static final String PLACE_ID = "id";
     private static final String PLACE_NAME = "name";
@@ -28,6 +27,7 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
     private static final String PLACE_LATITUDE = "latitude";
     private static final String PLACE_LONGITUDE = "longitude";
     private static final String PLACE_CATEGORY = "category";
+
 
     public SQLiteDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -56,7 +56,6 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
                 +TABLE_VISITED+" ("+PLACE_ID+" integer primary key);";
         db.execSQL(create_visited_table);
 
-//        String create_configuration_table = "create table configuration "
 
     }
 
@@ -126,6 +125,10 @@ public class SQLiteDatabaseHelper extends SQLiteOpenHelper {
 
 
 
+    public Cursor getAllPlaces(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("select * from "+TABLE_PLACES+";",null);
+    }
 
     public Cursor getPlaceById(int id)
     {

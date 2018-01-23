@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="smartAmigos.com.nammakarnataka.GoogleSigninActivity">
+    tools:context="smartAmigos.com.nammakarnataka.GoogleSigninActivity"
+    android:background="@drawable/wallpaper1"
+    >
 
 
 
     <com.google.android.gms.common.SignInButton
-        android:padding="12dp"
+        android:padding="2dp"
         android:id="@+id/googleSignInButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

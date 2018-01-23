@@ -1,11 +1,24 @@
 package smartAmigos.com.nammakarnataka;
 
-import android.annotation.SuppressLint;
+import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -14,21 +27,32 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import smartAmigos.com.nammakarnataka.helper.BackendHelper;
+import smartAmigos.com.nammakarnataka.helper.MyLocationHelper;
 
 
 public class SignupActivity extends AppCompatActivity implements View.OnClickListener {
 
     static Context context;
     Button signup_button;
-    EditText signup_username, signup_age, signup_phoneno, signup_name, signup_email, signup_city, signup_district;
+    TextView signup_email;
+    EditText signup_username, signup_age, signup_phoneno;
     ImageView signup_male, signup_female;
     static View view;
-
-    static String name, username, phoneno, email, city, district, gender;
+    ProgressDialog pd;
+    static String username, phoneno, email, district, gender;
     static int age;
-    @SuppressLint("MissingPermission")
+    static ProgressDialog progressDialog;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,42 +62,46 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
         initializeViews();
 
-        //Send firebase_instance_id to BackendHelper systems
-        BackendHelper.firebase_id_update firebaseIdUpdate = new BackendHelper.firebase_id_update();
-        firebaseIdUpdate.execute(context);
+        update_firebase_id();
 
     }
-
 
     public void initializeViews()
     {
         signup_button = findViewById(R.id.signup_button);
         signup_username = findViewById(R.id.signup_username);
         signup_age = findViewById(R.id.signup_age);
-        signup_name = findViewById(R.id.signup_name);
         signup_email = findViewById(R.id.signup_email);
         signup_phoneno = findViewById(R.id.signup_phoneno);
         signup_male = findViewById(R.id.signup_male);
         signup_female = findViewById(R.id.signup_female);
-        signup_city = findViewById(R.id.signup_city);
-        signup_district = findViewById(R.id.signup_district);
         view = findViewById(android.R.id.content);
-        context = getApplicationContext();
+        context = SignupActivity.this;
+        pd = new ProgressDialog(SignupActivity.this);
+        progressDialog = new ProgressDialog(SignupActivity.this);
 
-        //populating the name and email-id values from the sharedpreferences
+
+        //populating the email-id values from the sharedpreferences
         SharedPreferences sharedPreferences = getSharedPreferences("nk", MODE_PRIVATE);
-        signup_name.setText(sharedPreferences.getString("name", ""));
         signup_email.setText(sharedPreferences.getString("email", ""));
-
-        //make these two fields non-editable
-        signup_name.setKeyListener(null);
-        signup_email.setKeyListener(null);
-
 
         signup_female.setOnClickListener(this);
         signup_male.setOnClickListener(this);
         signup_button.setOnClickListener(this);
     }
+
+    public void update_firebase_id(){
+        if(isNetworkConnected()){
+            BackendHelper.firebase_id_update firebaseIdUpdate = new BackendHelper.firebase_id_update();
+            firebaseIdUpdate.execute(context);
+        }
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
+    }
+
 
     @Override
     public void onClick(View view) {
@@ -91,103 +119,187 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 break;
 
             case R.id.signup_button:
+                if(isNetworkConnected()){
                     validateFields();
+                }
                 break;
 
         }
     }
 
-
     private void validateFields() {
 
         username = signup_username.getText().toString();
-        name = signup_name.getText().toString();
         email = signup_email.getText().toString();
         phoneno = signup_phoneno.getText().toString();
         String s_age = signup_age.getText().toString();
+
         if(s_age.length() > 0){
             age = Integer.parseInt(s_age);
         }
-        city = signup_city.getText().toString();
-        district = signup_district.getText().toString();
 
-        if(s_age.length() == 0){
-            Snackbar.make(view,"Empty age field!", Snackbar.LENGTH_SHORT)
-                    .setAction("Action", null).show();
-        }else if(name.length() == 0){
-            Snackbar.make(view,"Empty name field!", Snackbar.LENGTH_SHORT)
+        if(s_age.length() == 0) {
+            Snackbar.make(view, "Empty AGE field", Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
         }else if(email.length() == 0){
-            Snackbar.make(view,"Empty email field!", Snackbar.LENGTH_SHORT)
+            Snackbar.make(view,"Empty EMAIL field", Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
-        }else if(username.length() == 0){
-            Snackbar.make(view,"Empty username field!", Snackbar.LENGTH_SHORT)
+        }else if(username.length() < 4){
+            Snackbar.make(view,"Minimum 4 letters in Username is required", Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
-        }else if(phoneno.length() == 0){
-            Snackbar.make(view,"Empty phoneno field!", Snackbar.LENGTH_SHORT)
+        }else if(username.length() > 12){
+            Snackbar.make(view,"Max 12 letters in Username is allowed", Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
-        }else if(city.length() == 0){
-            Snackbar.make(view,"Empty city field!", Snackbar.LENGTH_SHORT)
-                    .setAction("Action", null).show();
-        }else if(district.length() == 0){
-            Snackbar.make(view,"Empty district field!", Snackbar.LENGTH_SHORT)
+        }else if(phoneno.length() != 10){
+            Snackbar.make(view,"Invalid Phone number", Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
         }else if(gender == null){
-            Snackbar.make(view,"Please pick your gender", Snackbar.LENGTH_SHORT)
+            Snackbar.make(view,"Please pick your GENDER", Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
         }else{
-            username_validate();
+            validateUsernameField();
         }
 
     }
 
-    private void username_validate() {
-        if(username.contains(" ") || username.contains("@") || username.contains("#") ||
-                username.contains("$") || username.contains("%") || username.contains("^") ||
-                username.contains("&") || username.contains("*") || username.contains("(") ||
-                username.contains(")") || username.contains("+") || username.contains("=") ||
-                username.contains("!") || username.contains("~") || username.contains("`") ||
-                username.contains("[") || username.contains("]") || username.contains("{") ||
-                username.contains("}") || username.contains("\\") || username.contains("|") ||
-                username.contains(";") || username.contains(":") || username.contains("\"") ||
-                username.contains("'") || username.contains(",") || username.contains(".") ||
-                username.contains("<") || username.contains(">") || username.contains("?") ||
-                username.contains("/")
-                ){
-            Snackbar.make(view,"Username cannot have special characters", Snackbar.LENGTH_SHORT)
-                    .setAction("Action", null).show();
-        }else{
-            Log.d("USERNAME", "ENTERTED VALID USERNAME");
+    private void validateUsernameField() {
 
-            BackendHelper.username_validate validate_username = new BackendHelper.username_validate();
-            validate_username.execute(username, context);
+        if(username.matches("[a-z0-9_]*")){
+            getUserLocation();
+        }else{
+            Snackbar.make(view,"USERNAME Invalid, only small characters and '_' can be used", Snackbar.LENGTH_SHORT)
+                    .setAction("Action", null).show();
         }
+
+    }
+
+    public void getUserLocation(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            {
+                if(isNetworkConnected()){
+                    getLocationLatLong();
+                }else {
+                    Toast.makeText(context, "No Internet Connection!",Toast.LENGTH_SHORT).show();
+                }
+            }
+            else {
+                Toast.makeText(context, "Enable Location permissions!",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getApplication().getPackageName(), null);
+                intent.setData(uri);
+                startActivity(intent);
+            }
+        }else{
+            if(isNetworkConnected()){
+                getLocationLatLong();
+            }else {
+                Toast.makeText(context, "No Internet Connection!",Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
+
+    private void getLocationLatLong() {
+        pd.setMessage("Determining your location..");
+        pd.setCancelable(false);
+        pd.show();
+
+        MyLocationHelper.LocationResult locationResult = new MyLocationHelper.LocationResult(){
+            @Override
+            public void gotLocation(Location source){
+                if(pd.isShowing())
+                    pd.dismiss();
+
+                if(source!=null){
+
+                    SharedPreferences sharedPreferences = context.getSharedPreferences("nk", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("latitude",source.getLatitude()+"");
+                    editor.putString("longitude",source.getLongitude()+"");
+                    editor.commit();
+
+                    Log.d("LOCATION", source.toString());
+                    decodeLocation(source.getLatitude(), source.getLongitude());
+
+                }else{
+                    Log.d("LOCATION : NULL = ", source.toString());
+                }
+            }
+        };
+        MyLocationHelper myLocation = new MyLocationHelper();
+        myLocation.getLocation(context, locationResult);
     }
 
 
+
+    private void decodeLocation(final double latitude, final double longitude){
+            Geocoder geocoder = new Geocoder(SignupActivity.this, Locale.getDefault());
+            String result = null;
+            try {
+                List<Address> addressList = geocoder.getFromLocation(
+                        latitude,longitude, 1);
+
+                if (addressList != null && addressList.size() > 0) {
+                    Address address = addressList.get(0);
+
+                    district = address.getSubAdminArea(); //district name
+
+                    checkIsExistingUser();
+                }
+            } catch (IOException e) {
+                Log.e("LOCATION", "Unable connect to Geocoder", e);
+            }
+    }
+
+
+    //Calls the BackendHelper class to validate weather the username is present in the backend or not
+    private void checkIsExistingUser(){
+        progressDialog.setMessage("Checking username in our servers..!");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        BackendHelper.username_validate validate_username = new BackendHelper.username_validate();
+        validate_username.execute(username, context);
+    }
+
+    /*
+        the registeruser function is called by the BackendHelper class once the username is validated to be either
+        present == true
+        absent == false
+     */
     public static void registeruser(boolean value) {
-
         if(value){
+            progressDialog.setMessage("Registering user..");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
             SharedPreferences sharedPreferences = context.getSharedPreferences("nk", MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("username",username);
             editor.putString("phoneno", phoneno);
-            editor.putString("city", city);
             editor.putString("district", district);
             editor.putInt("age", age);
             editor.putString("gender", gender);
             editor.commit();
 
+
             BackendHelper.user_signup helper = new BackendHelper.user_signup();
             helper.execute(context);
         }else{
+            if(progressDialog.isShowing())
+                progressDialog.dismiss();
+
             Snackbar.make(view,"Username exists!\nChoose a new one more wisely", Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
         }
     }
 
-
     public static void callMainActivity(){
+        if(progressDialog.isShowing())
+            progressDialog.dismiss();
+
         Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);

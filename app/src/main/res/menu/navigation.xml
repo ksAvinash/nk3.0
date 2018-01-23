@@ -6,10 +6,10 @@
         android:icon="@drawable/ic_home_black_24dp"
         android:title="Home" />
 
-    <item
-        android:id="@+id/navigation_trending"
-        android:icon="@drawable/navigation_trending"
-        android:title="Trending" />
+    <!--<item-->
+        <!--android:id="@+id/navigation_trending"-->
+        <!--android:icon="@drawable/navigation_trending"-->
+        <!--android:title="Trending" />-->
 
     <item
         android:id="@+id/navigation_category"

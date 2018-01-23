@@ -1,5 +1,6 @@
 package smartAmigos.com.nammakarnataka;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +13,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -21,6 +21,7 @@ import android.view.MenuItem;
 
 import android.app.SearchManager;
 import android.support.v7.widget.SearchView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     Context context;
     SQLiteDatabaseHelper myDBHelper;
+    ProgressDialog pd;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -58,12 +60,6 @@ public class MainActivity extends AppCompatActivity {
                     fragmentTransaction.replace(R.id.frame_content, new CategoriesFragment()).commit();
                     return true;
 
-                case R.id.navigation_trending:
-                    fragmentManager = getSupportFragmentManager();
-                    fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.frame_content, new TrendingFragment()).commit();
-                    return true;
-
                 case R.id.navigation_maps:
                     Intent intent = new Intent(MainActivity.this, MapsActivity.class);
                     startActivity(intent);
@@ -78,28 +74,35 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
+        pd = new ProgressDialog(MainActivity.this);
+
 
         //Initialize the bottom navigation view and it's listener
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
 
+        fetch_places(false);
 
-        //Jump to HomeFragment on MainActivity invocation
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_content, new HomeFragment()).commit();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.frame_content, new HomeFragment()).commit();
+            }
 
-        fetch_places();
+        }, 150);
+
     }
 
 
-    public void fetch_places(){
+    public void fetch_places(boolean forcefetch){
         if(isNetworkConnected()){
 
             boolean fetch_again = get_previous_fetch_history();
 
-            if(fetch_again){
+            if(fetch_again || forcefetch){
                 //update last fetch time in sharedpreferences
                 Date current_date = new Date();
                 sharedPreferences = getSharedPreferences("nk", MODE_PRIVATE);
@@ -114,16 +117,19 @@ public class MainActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+
                         BackendHelper.fetch_category_places fetchCategoryPlaces = new BackendHelper.fetch_category_places();
                         fetchCategoryPlaces.execute(context, "hillstation");
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
+
                                 BackendHelper.fetch_category_places fetchCategoryPlaces = new BackendHelper.fetch_category_places();
                                 fetchCategoryPlaces.execute(context, "dam");
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
+
                                         BackendHelper.fetch_category_places fetchCategoryPlaces = new BackendHelper.fetch_category_places();
                                         fetchCategoryPlaces.execute(context, "waterfall");
                                         new Handler().postDelayed(new Runnable() {
@@ -134,11 +140,13 @@ public class MainActivity extends AppCompatActivity {
                                                 new Handler().postDelayed(new Runnable() {
                                                     @Override
                                                     public void run() {
+
                                                         BackendHelper.fetch_category_places fetchCategoryPlaces = new BackendHelper.fetch_category_places();
                                                         fetchCategoryPlaces.execute(context, "heritage");
                                                         new Handler().postDelayed(new Runnable() {
                                                             @Override
                                                             public void run() {
+
                                                                 BackendHelper.fetch_category_places fetchCategoryPlaces = new BackendHelper.fetch_category_places();
                                                                 fetchCategoryPlaces.execute(context, "beach");
                                                                 new Handler().postDelayed(new Runnable() {
@@ -185,7 +193,6 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
 
-
     }
 
 
@@ -194,6 +201,34 @@ public class MainActivity extends AppCompatActivity {
         return cm.getActiveNetworkInfo() != null;
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.action_share:
+                    String str = "https://play.google.com/store/apps/details?id=" + getPackageName();
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT,
+                            "All you need to know about Karnataka\n\nDownload:\n" + str);
+                    sendIntent.setType("text/plain");
+                    startActivity(sendIntent);
+                break;
+
+            case R.id.action_refresh:
+                    if(isNetworkConnected()){
+                        Toast.makeText(getApplicationContext(), "Please wait..", Toast.LENGTH_SHORT).show();
+                        fetch_places(true);
+                    }else{
+                        Toast.makeText(context, "No Internet Connection!", Toast.LENGTH_SHORT).show();
+                    }
+                break;
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

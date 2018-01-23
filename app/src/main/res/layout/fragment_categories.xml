@@ -6,6 +6,7 @@
     tools:context="smartAmigos.com.nammakarnataka.CategoriesFragment">
 
 
+
     <Button
         android:layout_centerHorizontal="true"
         android:layout_width="match_parent"
@@ -76,7 +77,6 @@
         android:id="@+id/category_others"
         android:text="OTHER PLACES"
         />
-
 
 
 </RelativeLayout>

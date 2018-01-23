@@ -1,5 +1,6 @@
 package smartAmigos.com.nammakarnataka.helper;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -27,16 +28,15 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 public class BackendHelper {
-
     /*
-    THE SIGNUP HELPER CLASS
-    1) When invoked used the sharedpreference to get all user's details
-    2) Sends a post request to the backend
-    3) Parse the response back from the backend
-            if value of user-signup is true
-                then the value of isSignedIn is set to true --> used in SplasherActivity
-    4) Intents to MainActivity
-    */
+        THE SIGNUP HELPER CLASS
+        1) When invoked used the sharedpreference to get all user's details
+        2) Sends a post request to the backend
+        3) Parse the response back from the backend
+                if value of user-signup is true
+                    then the value of isSignedIn is set to true --> used in SplasherActivity
+        4) Intents to MainActivity
+        */
     public static class user_signup extends AsyncTask<Object, String, String>{
         Context context;
         SharedPreferences sharedPreferences;
@@ -69,12 +69,12 @@ public class BackendHelper {
             context = (Context) objects[0];
             sharedPreferences = context.getSharedPreferences("nk", MODE_PRIVATE);
             String email = sharedPreferences.getString("email", "");
-            String name = sharedPreferences.getString("name","");
             String username = sharedPreferences.getString("username", "");
             String gender = sharedPreferences.getString("gender", "M");
             int age = sharedPreferences.getInt("age",20);
             String phoneno = sharedPreferences.getString("phoneno", "");
-            String city = sharedPreferences.getString("city","");
+            String latitude = sharedPreferences.getString("latitude","0.00");
+            String longitude = sharedPreferences.getString("longitude","0.00");
             String district = sharedPreferences.getString("district", "");
 
             try{
@@ -88,12 +88,12 @@ public class BackendHelper {
 
                 JSONObject jsonParam = new JSONObject();
                 jsonParam.put("email", email);
-                jsonParam.put("name", name);
                 jsonParam.put("username", username);
                 jsonParam.put("gender", gender);
                 jsonParam.put("age", age);
                 jsonParam.put("phoneno", phoneno);
-                jsonParam.put("city", city);
+                jsonParam.put("latitude", latitude);
+                jsonParam.put("longitude", longitude);
                 jsonParam.put("district", district);
 
 
@@ -118,7 +118,6 @@ public class BackendHelper {
     }
 
 
-
     /*
     THE USERNAME_VALIDATE CLASS
     1) Accepts a username from the signup from
@@ -127,9 +126,11 @@ public class BackendHelper {
     */
     public static class username_validate extends AsyncTask<Object, String, String >{
 
+
         @Override
         protected void onPostExecute(String str) {
             super.onPostExecute(str);
+
             if(str != null){
                 try {
                     JSONObject object = new JSONObject(str);

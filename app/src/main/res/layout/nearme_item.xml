@@ -8,6 +8,7 @@
     android:paddingBottom="3dp"
     >
 
+
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,7 +23,7 @@
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:padding="1dp"
-                android:id="@+id/placeList_image"
+                android:id="@+id/nearme_image"
                 fresco:roundingBorderColor="#a2be94"
                 fresco:roundAsCircle="true"
                 fresco:roundingBorderWidth="2dp"
@@ -37,17 +38,17 @@
                 <TextView
                     xmlns:android="http://schemas.android.com/apk/res/android"
                     xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/placeList_name"
+                    android:id="@+id/nearme_placename"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorPrimaryText"
                     android:padding="8dp"
                     android:text="hillstations name"
                     android:textSize="18sp"
-                     />
+                    />
 
                 <TextView
-                    android:id="@+id/placeList_district"
+                    android:id="@+id/nearme_distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="20dp"

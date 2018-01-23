@@ -17,9 +17,9 @@
         android:textStyle="bold"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:textColor="@color/colorPrimaryText"
         android:padding="8dp"
         android:textSize="30sp" />
-
 
     <ListView
         android:id="@+id/places_list"
